@@ -1,0 +1,23 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "elasticbeanstalk-exporter",
+      "image": "jeremietharaud/elasticbeanstalk-exporter",
+      "environment": [
+        {
+          "name": "AWS_DEFAULT_REGION",
+          "value": "${region}"
+        }
+      ],
+      "essential": true,
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": "${instance_port}",
+          "containerPort": "${instance_port}"
+        }
+      ]
+    }
+  ]
+}
