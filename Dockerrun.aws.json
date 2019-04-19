@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "elasticbeanstalk-exporter",
-      "image": "jeremietharaud/elasticbeanstalk-exporter",
+      "image": "jeremietharaud/elasticbeanstalk-exporter:${image_tag}",
       "environment": [
         {
           "name": "AWS_DEFAULT_REGION",

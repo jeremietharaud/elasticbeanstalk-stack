@@ -18,9 +18,19 @@ variable "stack_name_regex" {
   default     = "^64bit Amazon Linux (.*) Multi-container Docker (.*)$"
 }
 
+variable "instance_type" {
+  description = "The instance type used to run the application in an Elastic Beanstalk environment."
+  default     = "t3.small"
+}
+
 variable "instance_port" {
   description = "Port used by the container"
   default     = "9552"
+}
+
+variable "image_tag" {
+  description = "Version of the application to deploy on Elastic Beanstalk Environment"
+  default     = "latest"
 }
 
 variable "health_reporting_system" {

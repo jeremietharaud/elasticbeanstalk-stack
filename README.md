@@ -12,8 +12,10 @@ It deploys a multi-container Docker platform ECS cluster with an EC2 instance an
 | boundary_name | Name of the permissions boundary for creating roles | string |  | no |
 | application_name | Name of the application | `elasticbeanstalk-exporter` | string | yes |
 | stack_name_regex | Regex of the stack name to retrieve | string | `^64bit Amazon Linux (.*) Multi-container Docker (.*)$` | yes |
+| instance_type | Instance type used to run the application | string | `t3.small` | yes |
 | instance_port | Port used by the container | string | `9552` | yes |
 | health_reporting_system | Type of health reporting system: basic or enhanced | string | `euhanced` | yes |
+| image_tag | Version of the application to deploy on Elastic Beanstalk Environment | string | `latest` | yes |
 | enable_cloudwatch_logs | Whether to create groups in CloudWatch Logs for proxy and deployment logs | string | `true` | yes |
 | delete_logs_on_termination | Whether to delete the log groups when the environment is terminated. | string | `true` | yes |
 | tags | Tags of the application | `"Application" = "elasticbeanstalk-exporter"` | string | yes |

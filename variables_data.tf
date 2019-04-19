@@ -12,5 +12,6 @@ data "template_file" "dockerrun" {
   vars {
     region        = "${var.region}"
     instance_port = "${var.instance_port}"
+    image_tag     = "${var.image_tag}"
   }
 }

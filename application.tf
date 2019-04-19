@@ -14,7 +14,7 @@ resource "aws_elastic_beanstalk_application" "elasticbeanstalk_exporter" {
 }
 
 resource "aws_elastic_beanstalk_application_version" "latest" {
-  name        = "latest"
+  name        = "${var.image_tag}"
   application = "${aws_elastic_beanstalk_application.elasticbeanstalk_exporter.name}"
   bucket      = "${aws_s3_bucket.bucket.id}"
   key         = "${aws_s3_bucket_object.bucket_object.id}"
@@ -31,6 +31,12 @@ resource "aws_elastic_beanstalk_environment" "environment" {
     namespace = "aws:elasticbeanstalk:environment"
     name      = "ServiceRole"
     value     = "${aws_iam_instance_profile.beanstalk_service.name}"
+  }
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "InstanceType"
+    value     = "${var.instance_type}"
   }
 
   setting {
