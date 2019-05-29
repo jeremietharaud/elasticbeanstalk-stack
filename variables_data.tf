@@ -1,5 +1,3 @@
-data "aws_caller_identity" "current" {}
-
 data "aws_elastic_beanstalk_solution_stack" "multi_docker" {
   most_recent = true
 

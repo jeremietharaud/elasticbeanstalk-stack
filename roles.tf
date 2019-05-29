@@ -17,8 +17,7 @@ resource "aws_iam_instance_profile" "beanstalk_ec2" {
 }
 
 resource "aws_iam_role" "beanstalk_service" {
-  name                 = "beanstalk-service-role"
-  permissions_boundary = "${var.boundary_name != "" ? local.permissions_boundary : ""}"
+  name = "beanstalk-service-role"
 
   assume_role_policy = <<EOF
 {
@@ -43,8 +42,7 @@ EOF
 }
 
 resource "aws_iam_role" "beanstalk_ec2" {
-  name                 = "beanstalk-ec2-role"
-  permissions_boundary = "${var.boundary_name != "" ? local.permissions_boundary : ""}"
+  name = "beanstalk-ec2-role"
 
   assume_role_policy = <<EOF
 {

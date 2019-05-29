@@ -3,11 +3,6 @@ variable "region" {
   default     = "eu-west-3"
 }
 
-variable "boundary_name" {
-  description = "Name of the permissions boundary for creating roles (optional)"
-  default     = ""
-}
-
 variable "application_name" {
   description = "Name of the application"
   default     = "elasticbeanstalk-exporter"
