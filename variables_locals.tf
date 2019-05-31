@@ -1,3 +1,3 @@
 locals {
-  healthcheck_location = "HTTP:${var.instance_port}/metrics"
+  healthcheck_location = "/metrics"
 }

@@ -34,6 +34,12 @@ resource "aws_elastic_beanstalk_environment" "environment" {
   }
 
   setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "LoadBalancerType"
+    value     = "application"
+  }
+
+  setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
     value     = "${var.instance_type}"
@@ -46,27 +52,33 @@ resource "aws_elastic_beanstalk_environment" "environment" {
   }
 
   setting {
-    namespace = "aws:elb:listener:80"
-    name      = "InstancePort"
-    value     = "${var.instance_port}"
-  }
-
-  setting {
-    namespace = "aws:elb:listener:80"
-    name      = "ListenerProtocol"
+    namespace = "aws:elbv2:listener:default"
+    name      = "Protocol"
     value     = "HTTP"
   }
 
   setting {
-    namespace = "aws:elb:listener:443"
+    namespace = "aws:elbv2:listener:443"
     name      = "ListenerEnabled"
     value     = "false"
   }
 
   setting {
-    namespace = "aws:elasticbeanstalk:application"
-    name      = "Application Healthcheck URL"
+    namespace = "aws:elasticbeanstalk:environment:process:default"
+    name      = "HealthCheckPath"
     value     = "${local.healthcheck_location}"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:environment:process:default"
+    name      = "Port"
+    value     = "${var.instance_port}"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:environment:process:default"
+    name      = "Protocol"
+    value     = "HTTP"
   }
 
   setting {
