@@ -16,6 +16,10 @@ token = "my.api.token"
 workspaces = [{name = "my-application"}]
 ```
 
+## Automatic deployment of the stack
+
+The stack is automatically deployed through a CircleCI pipeline.
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
