@@ -6,7 +6,7 @@ It deploys a multi-container Docker platform ECS cluster with an EC2 instance an
 
 ## Pre-requisite
 
-A remote backend has been configured in `aws.tf` for using Terraform Cloud or Terraform Enterprise. The section can be modified or removed to use another backend.
+A remote backend has been configured in `aws.tf` for using [Terraform Cloud](https://www.terraform.io/docs/enterprise/free/index.html) or [Terraform Enterprise](https://www.terraform.io/docs/enterprise/). The section can be modified or removed to use another backend.
 
 Exemple of remote backend configuration:
 ```
@@ -21,7 +21,7 @@ workspaces = [{name = "my-application"}]
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | region | Region to deploy the stack | string | `eu-west-3` | yes |
-| environment | Name of the environment to retrieve parameters in Parameter Store | string |  | yes |
+| environment | Name of the environment to retrieve parameters in Parameter Store | string | dev | yes |
 | application_name | Name of the application | string | `elasticbeanstalk-exporter` | yes |
 | stack_name_regex | Regex of the stack name to retrieve | string | `^64bit Amazon Linux (.*) Multi-container Docker (.*)$` | yes |
 | instance_type | Instance type used to run the application | string | `t3.small` | yes |
