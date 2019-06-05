@@ -4,3 +4,6 @@
 .terraform*
 eb/*
 *.tfvars
+environment/*
+backend.conf
+.vscode/*

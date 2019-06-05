@@ -3,6 +3,11 @@ variable "region" {
   default     = "eu-west-3"
 }
 
+variable "environment" {
+  description = "Name of the environment to retrieve parameters in Parameter Store"
+  default     = "dev"
+}
+
 variable "application_name" {
   description = "Name of the application"
   default     = "elasticbeanstalk-exporter"
