@@ -1,0 +1,67 @@
+plan_defaults: &plan_defaults
+  docker:
+    - image: jeremietharaud/terraform-image:latest
+      environment:
+          AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+          AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  steps:
+    - checkout
+    - run:
+        name: Terraform validate
+        command: |
+          echo Validate ${ENV} environment
+          terraform init -backend-config=./environment/${ENV}_backend.conf -backend-config="token=${TFC_TOKEN}"
+          terraform validate -var-file=./environment/${ENV}.tfvars
+    - run:
+        name: Terraform plan
+        command: |
+          echo Start plan of ${ENV} environment
+          terraform plan -var-file=./environment/${ENV}.tfvars
+
+apply_defaults: &apply_defaults
+  docker:
+    - image: jeremietharaud/terraform-image:latest
+      environment:
+          AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+          AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  steps:
+    - checkout
+    - run:
+        name: Terraform deploy
+        command: |
+          echo Apply on ${ENV} environment
+          terraform init -backend-config=./environment/${ENV}_backend.conf -backend-config="token=${TFC_TOKEN}"
+          terraform apply -var-file=./environment/${ENV}.tfvars -auto-approve
+
+version: 2.1
+jobs:
+  plan-dev:
+    <<: *plan_defaults
+    environment:
+      ENV: dev
+  apply-dev:
+    <<: *apply_defaults
+    environment:
+      ENV: dev
+
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - plan-dev:
+          filters:
+            branches:
+              only: [develop, master]
+      - request-confirmation-dev:
+          type: approval
+          requires:
+            - plan-dev
+          filters:
+            branches:
+              only: [develop, master]
+      - apply-dev:
+          filters:
+            branches:
+              only: [develop, master]
+          requires:
+            - request-confirmation-dev
