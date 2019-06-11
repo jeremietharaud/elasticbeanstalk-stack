@@ -61,8 +61,8 @@ data "template_file" "dockerrun" {
 
   vars {
     region        = "${var.region}"
-    instance_port = "${var.instance_port}"
-    image_tag     = "${var.image_tag}"
+    instance_port = "${data.aws_ssm_parameter.instance_port.value}"
+    image_tag     = "${data.aws_ssm_parameter.image_tag.value}"
   }
 }
 

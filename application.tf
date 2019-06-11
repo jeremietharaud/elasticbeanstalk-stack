@@ -9,7 +9,7 @@ resource "aws_s3_bucket_object" "bucket_object" {
 }
 
 resource "aws_elastic_beanstalk_application" "elasticbeanstalk_exporter" {
-  name        = "${var.application_name}"
+  name        = "${data.aws_ssm_parameter.application_name.value}"
   description = "Container used to export elasticbeanstalk metrics"
 }
 
