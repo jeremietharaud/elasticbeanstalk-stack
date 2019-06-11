@@ -14,14 +14,14 @@ resource "aws_elastic_beanstalk_application" "elasticbeanstalk_exporter" {
 }
 
 resource "aws_elastic_beanstalk_application_version" "latest" {
-  name        = "${var.image_tag}"
+  name        = "${data.aws_ssm_parameter.image_tag.value}"
   application = "${aws_elastic_beanstalk_application.elasticbeanstalk_exporter.name}"
   bucket      = "${aws_s3_bucket.bucket.id}"
   key         = "${aws_s3_bucket_object.bucket_object.id}"
 }
 
 resource "aws_elastic_beanstalk_environment" "environment" {
-  name                = "${var.application_name}"
+  name                = "${data.aws_ssm_parameter.application_name.value}"
   application         = "${aws_elastic_beanstalk_application.elasticbeanstalk_exporter.name}"
   solution_stack_name = "${data.aws_elastic_beanstalk_solution_stack.multi_docker.name}"
   tier                = "WebServer"
@@ -72,7 +72,7 @@ resource "aws_elastic_beanstalk_environment" "environment" {
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
-    value     = "${var.instance_type}"
+    value     = "${data.aws_ssm_parameter.instance_type.value}"
   }
 
   setting {
@@ -96,13 +96,13 @@ resource "aws_elastic_beanstalk_environment" "environment" {
   setting {
     namespace = "aws:elasticbeanstalk:environment:process:default"
     name      = "HealthCheckPath"
-    value     = "${local.healthcheck_location}"
+    value     = "${data.aws_ssm_parameter.alb_health_check_location.value}"
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:environment:process:default"
     name      = "Port"
-    value     = "${var.instance_port}"
+    value     = "${data.aws_ssm_parameter.instance_port.value}"
   }
 
   setting {
@@ -114,20 +114,20 @@ resource "aws_elastic_beanstalk_environment" "environment" {
   setting {
     namespace = "aws:elasticbeanstalk:healthreporting:system"
     name      = "SystemType"
-    value     = "${var.health_reporting_system}"
+    value     = "${data.aws_ssm_parameter.health_reporting_system.value}"
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:cloudwatch:logs"
     name      = "StreamLogs"
-    value     = "${var.enable_cloudwatch_logs}"
+    value     = "${data.aws_ssm_parameter.enable_cloudwatch_logs.value}"
   }
 
   setting {
     namespace = "aws:elasticbeanstalk:cloudwatch:logs"
     name      = "DeleteOnTerminate"
-    value     = "${var.delete_logs_on_termination}"
+    value     = "${data.aws_ssm_parameter.delete_logs_on_termination.value}"
   }
 
-  tags = "${var.tags}"
+  tags = "${local.tags}"
 }

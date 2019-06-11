@@ -10,13 +10,13 @@ plan_defaults: &plan_defaults
         name: Terraform validate
         command: |
           echo Validate ${ENV} environment
-          terraform init -backend-config=./environment/${ENV}_backend.conf -backend-config="token=${TFC_TOKEN}"
-          terraform validate -var-file=./environment/${ENV}.tfvars
+          terraform init -backend-config="hostname=${TFC_HOSTNAME}" -backend-config="organization=${TFC_ORGANIZATION}" -backend-config="workspaces=[{name=\"${CIRCLE_PROJECT_REPONAME}-${ENV}\"}]" -backend-config="token=${TFC_TOKEN}"
+          terraform validate -var "environment=${ENV}" -var "region=${AWS_REGION}"
     - run:
         name: Terraform plan
         command: |
           echo Start plan of ${ENV} environment
-          terraform plan -var-file=./environment/${ENV}.tfvars
+          terraform plan -var "environment=${ENV}" -var "region=${AWS_REGION}"
 
 apply_defaults: &apply_defaults
   docker:
@@ -30,8 +30,8 @@ apply_defaults: &apply_defaults
         name: Terraform deploy
         command: |
           echo Apply on ${ENV} environment
-          terraform init -backend-config=./environment/${ENV}_backend.conf -backend-config="token=${TFC_TOKEN}"
-          terraform apply -var-file=./environment/${ENV}.tfvars -auto-approve
+          terraform init -backend-config="hostname=${TFC_HOSTNAME}" -backend-config="organization=${TFC_ORGANIZATION}" -backend-config="workspaces=[{name=\"${CIRCLE_PROJECT_REPONAME}-${ENV}\"}]" -backend-config="token=${TFC_TOKEN}"
+          terraform apply -var "environment=${ENV}" -var "region=${AWS_REGION}" -auto-approve
 
 version: 2.1
 jobs:
