@@ -4,3 +4,4 @@
 .terraform*
 eb/*
 .vscode/*
+init-ssm/*
