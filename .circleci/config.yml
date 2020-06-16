@@ -1,6 +1,6 @@
 plan_defaults: &plan_defaults
   docker:
-    - image: jeremietharaud/terraform-image:latest
+    - image: jeremietharaud/terraform-image:0.11.14
       environment:
           AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
           AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -10,17 +10,21 @@ plan_defaults: &plan_defaults
         name: Terraform validate
         command: |
           echo Validate ${ENV} environment
+          export TF_VAR_environment=${ENV}
+          export TF_VAR_region=${AWS_REGION}
           terraform init -backend-config="hostname=${TFC_HOSTNAME}" -backend-config="organization=${TFC_ORGANIZATION}" -backend-config="workspaces=[{name=\"${CIRCLE_PROJECT_REPONAME}-${ENV}\"}]" -backend-config="token=${TFC_TOKEN}"
-          terraform validate -var "environment=${ENV}" -var "region=${AWS_REGION}"
+          terraform validate
     - run:
         name: Terraform plan
         command: |
           echo Start plan of ${ENV} environment
-          terraform plan -var "environment=${ENV}" -var "region=${AWS_REGION}"
+          export TF_VAR_environment=${ENV}
+          export TF_VAR_region=${AWS_REGION}
+          terraform plan
 
 apply_defaults: &apply_defaults
   docker:
-    - image: jeremietharaud/terraform-image:latest
+    - image: jeremietharaud/terraform-image:0.11.14
       environment:
           AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
           AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
@@ -30,8 +34,27 @@ apply_defaults: &apply_defaults
         name: Terraform deploy
         command: |
           echo Apply on ${ENV} environment
+          export TF_VAR_environment=${ENV}
+          export TF_VAR_region=${AWS_REGION}
           terraform init -backend-config="hostname=${TFC_HOSTNAME}" -backend-config="organization=${TFC_ORGANIZATION}" -backend-config="workspaces=[{name=\"${CIRCLE_PROJECT_REPONAME}-${ENV}\"}]" -backend-config="token=${TFC_TOKEN}"
-          terraform apply -var "environment=${ENV}" -var "region=${AWS_REGION}" -auto-approve
+          terraform apply -auto-approve
+
+destroy_defaults: &destroy_defaults
+  docker:
+    - image: jeremietharaud/terraform-image:0.11.14
+      environment:
+          AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+          AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  steps:
+    - checkout
+    - run:
+        name: Terraform destroy
+        command: |
+          echo Destroy ${ENV} environment
+          export TF_VAR_environment=${ENV}
+          export TF_VAR_region=${AWS_REGION}
+          terraform init -backend-config="hostname=${TFC_HOSTNAME}" -backend-config="organization=${TFC_ORGANIZATION}" -backend-config="workspaces=[{name=\"${CIRCLE_PROJECT_REPONAME}-${ENV}\"}]" -backend-config="token=${TFC_TOKEN}"
+          terraform destroy -auto-approve
 
 version: 2.1
 jobs:
@@ -41,6 +64,10 @@ jobs:
       ENV: dev
   apply-dev:
     <<: *apply_defaults
+    environment:
+      ENV: dev
+  destroy-dev:
+    <<: *destroy_defaults
     environment:
       ENV: dev
 
@@ -65,3 +92,16 @@ workflows:
               only: [develop, master]
           requires:
             - request-confirmation-dev
+      - request-destroy-dev:
+          type: approval
+          requires:
+            - plan-dev
+          filters:
+            branches:
+              only: [develop, master]
+      - destroy-dev:
+          filters:
+            branches:
+              only: [develop, master]
+          requires:
+            - request-destroy-dev
